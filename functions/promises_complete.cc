@@ -1,14 +1,17 @@
 // Copyright 2020 Storj Storj
 /** @mainpage Node-js bindings
  *  It uses napi for creating node module
- * 
+ *
  */
 #include "promises_complete.h"
+#include "release_objects_helpers.h"
 #include <string>
+
+
 /*!
- \fn void openProjectPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void openProjectPromiseComplete(napi_env env, napi_status status, void* data)
  \brief openProjectPromiseComplete creates the handle for open_project
-  
+
  */
 void openProjectPromiseComplete(napi_env env, napi_status status, void* data) {
   openProjectPromiseObj *obj = (openProjectPromiseObj*)data;
@@ -27,7 +30,7 @@ void openProjectPromiseComplete(napi_env env, napi_status status, void* data) {
     size_t handlevalue = project._handle;
 
     napi_value projectNAPIObj = createResult(env, "project", handlevalue);
-    
+
     //
     status = napi_resolve_deferred(env, obj->deferred, projectNAPIObj);
   }
@@ -40,10 +43,10 @@ void openProjectPromiseComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void listObjectPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void listObjectPromiseComplete(napi_env env, napi_status status, void* data)
  \brief listObjectPromiseComplete creates the handle for list_objects
   it shows null if zero objects found in the list .
-  
+
  */
 void listObjectPromiseComplete(napi_env env, napi_status status, void* data) {
   listObjectPromiseObj *obj = (listObjectPromiseObj*)data;
@@ -84,9 +87,9 @@ void listObjectPromiseComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void downloadInfoOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void downloadInfoOperationComplete(napi_env env, napi_status status, void* data)
  \brief  downloadInfoOperationComplete creates the handle for download_info
-  
+
  */
 void downloadInfoOperationComplete(napi_env env,
 napi_status status, void* data) {
@@ -116,9 +119,9 @@ napi_status status, void* data) {
 }
 
 /*!
- \fn void downloadCloseOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void downloadCloseOperationComplete(napi_env env, napi_status status, void* data)
  \brief  downloadCloseOperationComplete creates the handle for close_download .
-  
+
  */
 void downloadCloseOperationComplete(napi_env env,
 napi_status status, void* data) {
@@ -147,9 +150,9 @@ napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void downloadReadOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void downloadReadOperationComplete(napi_env env, napi_status status, void* data)
  \brief  downloadReadOperationComplete creates the handle for download_read
-  
+
  */
 void downloadReadOperationComplete(napi_env env,
 napi_status status, void* data) {
@@ -185,13 +188,14 @@ napi_status status, void* data) {
     napi_throw_error(env, NULL, "Failed to return promise");
   }
   napi_delete_async_work(env, obj->work);
+  uplink_free_read_result(read_result);
   free(obj);
 }
 /*!
- \fn void downloadObjectOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void downloadObjectOperationComplete(napi_env env, napi_status status, void* data)
  \brief  downloadobjectOperationComplete creates the handle for download_object
 it shows null if download has zero options.
-  
+
  */
 
 void downloadObjectOperationComplete(napi_env env,
@@ -208,12 +212,7 @@ napi_status status, void* data) {
       createError(env, error_result.code, errorMessagePtr));
     }
   } else {
-    UplinkDownload download = *(download_result.download);
-    size_t handlevalue = download._handle;
-
-    napi_value downloadResultNAPI = createResult(env, "download", handlevalue);
-    //
-    status = napi_resolve_deferred(env, obj->deferred, downloadResultNAPI);
+    status = napi_resolve_deferred(env, obj->deferred, DownloadObjectReleaseHelper::CreateInstanceAndSetDownloadResult(env, download_result));
   }
   if (status != napi_ok) {
     napi_throw_error(env, NULL, "Failed to return promise");
@@ -222,9 +221,9 @@ napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void uploadSetMetaPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadSetMetaPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  uploadSetMetaPromiseComplete creates the handle for upload_set_custom_metadata
-  
+
  */
 void uploadSetMetaPromiseComplete(napi_env env,
 napi_status status, void* data) {
@@ -252,9 +251,9 @@ napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void uploadAbortPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadAbortPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  uploadAbortPromiseComplete creates the handle for upload_abort
-  
+
  */
 void uploadAbortPromiseComplete(napi_env env, napi_status status, void* data) {
   uploadAbortPromiseObj *obj = (uploadAbortPromiseObj*)data;
@@ -281,9 +280,9 @@ void uploadAbortPromiseComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void uploadInfoOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadInfoOperationComplete(napi_env env, napi_status status, void* data)
  \brief  uploadInfoOperationComplete creates the handle for upload_info
-  
+
  */
 void uploadInfoOperationComplete(napi_env env, napi_status status, void* data) {
   uploadInfoObj *obj = (uploadInfoObj*)data;
@@ -311,9 +310,9 @@ void uploadInfoOperationComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void uploadCommitOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadCommitOperationComplete(napi_env env, napi_status status, void* data)
  \brief  uploadCommitOperationComplete creates the handle for upload_commit
-  
+
  */
 void uploadCommitOperationComplete(napi_env env,
 napi_status status, void* data) {
@@ -341,9 +340,9 @@ napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void uploadWriteOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadWriteOperationComplete(napi_env env, napi_status status, void* data)
  \brief  uploadWriteOperationComplete creates the handle for upload_write
-  
+
  */
 void uploadWriteOperationComplete(napi_env env,
 napi_status status, void* data) {
@@ -379,12 +378,13 @@ napi_status status, void* data) {
     napi_throw_error(env, NULL, "Failed to return promise");
   }
   napi_delete_async_work(env, obj->work);
+  uplink_free_write_result(obj->write_result);
   free(obj);
 }
 /*!
- \fn void uploadObjectComplete(napi_env env, napi_status status, void* data) 
+ \fn void uploadObjectComplete(napi_env env, napi_status status, void* data)
  \brief  uploadObjectComplete creates the handle for upload_object .
- it shows null if upload option set contains zero object.  
+ it shows null if upload option set contains zero object.
  */
 void uploadObjectComplete(napi_env env, napi_status status, void* data) {
   uploadobjectObj *obj = (uploadobjectObj*)data;
@@ -399,12 +399,7 @@ void uploadObjectComplete(napi_env env, napi_status status, void* data) {
       createError(env, error_result.code, errorMessagePtr));
     }
   } else {
-    UplinkUpload upload = *(upload_result.upload);
-    size_t handlevalue = upload._handle;
-
-    napi_value uploadResultNAPI = createResult(env, "upload", handlevalue);
-    //
-    status = napi_resolve_deferred(env, obj->deferred, uploadResultNAPI);
+    status = napi_resolve_deferred(env, obj->deferred, UploadObjectReleaseHelper::CreateInstanceAndSetUploadResult(env, upload_result));
 //
   }
   if (status != napi_ok) {
@@ -414,10 +409,10 @@ void uploadObjectComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void objectOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void objectOperationComplete(napi_env env, napi_status status, void* data)
  \brief  objectOperationComplete used to implement the uplink-c library function
          objectOperationComplete signifies about object using promise
-  
+
  */
 void objectOperationComplete(napi_env env, napi_status status, void* data) {
   napi_value objectNAPI;
@@ -458,10 +453,10 @@ void objectOperationComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void bucketOperationComplete(napi_env env, napi_status status, void* data) 
+ \fn void bucketOperationComplete(napi_env env, napi_status status, void* data)
  \brief  bucketOperationComplete used to implement the uplink-c library function
       bucketOperationComplete operations on buckets using promise
-  
+
  */
 void bucketOperationComplete(napi_env env, napi_status status, void* data) {
   napi_value bucketNAPI;
@@ -475,7 +470,7 @@ void bucketOperationComplete(napi_env env, napi_status status, void* data) {
     if (errorMessagePtr == NULL) {errorMessagePtr = &blank[0];}
     status = napi_reject_deferred(env, obj->deferred,
     createError(env, error_result.code, errorMessagePtr));
-  } 
+  }
   else if (bucket_result.bucket != NULL) {
     //
     UplinkBucket bucket = *(bucket_result.bucket);
@@ -501,9 +496,9 @@ void bucketOperationComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void ListBucketPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void ListBucketPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  ListBucketPromiseComplete creates the handle for list_buckets
-  
+
  */
 void ListBucketsPromiseComplete(napi_env env, napi_status status, void* data) {
   ListBucketsPromiseObj *obj = (ListBucketsPromiseObj*)data;
@@ -520,7 +515,7 @@ void ListBucketsPromiseComplete(napi_env env, napi_status status, void* data) {
 
   status = napi_create_object(env, &returnObject);
   assert(status == napi_ok);
-  
+
   int count = 0;
   while (uplink_bucket_iterator_next(bucket_resultIterator)) {
     UplinkBucket *bucket_result = uplink_bucket_iterator_item(bucket_resultIterator);
@@ -567,9 +562,9 @@ void ListBucketsPromiseComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void closeProjectPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void closeProjectPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  closeProjectPromiseComplete creates the handle for close_project
-  
+
  */
 void closeProjectPromiseComplete(napi_env env, napi_status status, void* data) {
   closeProjectPromiseObj *obj = (closeProjectPromiseObj*)data;
@@ -593,12 +588,13 @@ void closeProjectPromiseComplete(napi_env env, napi_status status, void* data) {
     napi_throw_error(env, NULL, "Failed to return promise");
   }
   napi_delete_async_work(env, obj->work);
+  //uplink_free_project_result(obj->project_result);
   free(obj);
 }
 /*!
- \fn void configOpenProjectPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void configOpenProjectPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  configOpenProjectPromiseComplete creates the handle for config_open_project
-  
+
  */
 void configOpenProjectPromiseComplete(napi_env env,
 napi_status status, void* data) {
@@ -630,9 +626,9 @@ napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void ParseAccessPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void ParseAccessPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  ParseAccessPromiseComplete creates the handle for parse_access
-  
+
  */
 void ParseAccessPromiseComplete(napi_env env,
     napi_status status, void* data) {
@@ -663,9 +659,9 @@ void ParseAccessPromiseComplete(napi_env env,
     free(obj);
 }
 /*!
- \fn void ShareAccessPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void ShareAccessPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  ShareAccessPromiseComplete creates the handle for access_share
-  
+
  */
 void ShareAccessPromiseComplete(napi_env env, napi_status status, void* data) {
   AccessSharePromiseObj *obj = (AccessSharePromiseObj*)data;
@@ -694,9 +690,9 @@ void ShareAccessPromiseComplete(napi_env env, napi_status status, void* data) {
   free(obj);
 }
 /*!
- \fn void ConfigRequestAccessWithEncryptionPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void ConfigRequestAccessWithEncryptionPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  ConfigRequestAccessWithEncryptionPromiseComplete creates the handle for config_request_access_with_passphrase
-  
+
  */
 void ConfigRequestAccessWithEncryptionPromiseComplete
 (napi_env env, napi_status status, void* data) {
@@ -716,7 +712,7 @@ void ConfigRequestAccessWithEncryptionPromiseComplete
     size_t handlevalue = access._handle;
 
     napi_value AccessNAPIObj = createResult(env, "access", handlevalue);
-    
+
     //
     status = napi_resolve_deferred(env, obj->deferred, AccessNAPIObj);
   }
@@ -729,9 +725,9 @@ void ConfigRequestAccessWithEncryptionPromiseComplete
   free(obj);
 }
 /*!
- \fn void RequestAccessWithEncryptionPromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void RequestAccessWithEncryptionPromiseComplete(napi_env env, napi_status status, void* data)
  \brief  RequestAccessWithEncryptionPromiseComplete creates the handle for request_access_with_passphrase
-  
+
  */
 void RequestAccessWithEncryptionPromiseComplete
 (napi_env env, napi_status status, void* data) {
@@ -751,7 +747,7 @@ void RequestAccessWithEncryptionPromiseComplete
     size_t handlevalue = access._handle;
 
     napi_value AccessNAPIObj = createResult(env, "access", handlevalue);
-  
+
     status = napi_resolve_deferred(env, obj->deferred, AccessNAPIObj);
   }
   //
@@ -763,9 +759,9 @@ void RequestAccessWithEncryptionPromiseComplete
   free(obj);
 }
 /*!
- \fn void accessSerializePromiseComplete(napi_env env, napi_status status, void* data) 
+ \fn void accessSerializePromiseComplete(napi_env env, napi_status status, void* data)
  \brief  accessSerializePromiseComplete creates the handle for access_serialize
-  
+
  */
 
 void accessSerializePromiseComplete(napi_env env,
@@ -815,9 +811,9 @@ napi_status status, void* data) {
         size_t handlevalue = encryption_key._handle;
 
         napi_value EncryptionNAPIObj = createResult(env, "encryption_key", handlevalue);
- 
+
         status = napi_resolve_deferred(env, obj->deferred, EncryptionNAPIObj
-        
+
         );
     }
     //
