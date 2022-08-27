@@ -5,7 +5,7 @@
 *.so
 *.a
 *.dylib
-libuplinkcv*.h
+libuplinkcv*.*.*.h
 uplink_compat.h
 uplink_definitions.h
 secret.txt
