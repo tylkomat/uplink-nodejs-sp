@@ -5,6 +5,8 @@
 *.so
 *.a
 *.dylib
-libuplinkcv1.2.4.h
+libuplinkcv*.h
 uplink_compat.h
 uplink_definitions.h
+secret.txt
+/test/*.js
