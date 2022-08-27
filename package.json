@@ -27,19 +27,17 @@
   },
   "homepage": "https://github.com/Super-Protocol/uplink-nodejs-sp.git#readme",
   "devDependencies": {
-    "@tsconfig/node12": "^1.0.7",
-    "@types/mocha": "^8.2.0",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.8.1",
-    "chai": "^4.2.0",
-    "eslint": "^7.6.0",
-    "mocha": "^8.2.1",
-    "typescript": "^4.0.5"
-  },
-  "dependencies": {
-    "@types/bindings": "^1.3.0",
-    "@types/node": "^14.14.10",
+    "@tsconfig/node12": "^1.0.11",
+    "@types/bindings": "^1.5.1",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.7.13",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
     "bindings": "^1.5.0",
-    "node-gyp": "^7.0.0"
+    "chai": "^4.3.6",
+    "eslint": "^8.23.0",
+    "mocha": "^10.0.0",
+    "node-gyp": "^9.1.0",
+    "typescript": "^4.8.2"
   }
 }
