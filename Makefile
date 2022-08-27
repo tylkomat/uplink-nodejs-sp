@@ -9,15 +9,15 @@ GIT_REPO=https://github.com/storj/uplink-c
 UPLINKC_NAME=uplink-c
 UPLINKC_VERSION=v1.2.2
 #Library Name
-LIBRARY_NAME_POSIX=libuplinkcv1.2.4.a
-LIBRARY_NAME_WIN=libuplinkcv1.2.4.dll
+LIBRARY_NAME_POSIX=libuplinkcv1.7.0.a
+LIBRARY_NAME_WIN=libuplinkcv1.7.0.dll
 LIBRARY_UPLINK=*.h
-DELETE_LIBRARY_HEADER=libuplinkcv1.2.4.h
+DELETE_LIBRARY_HEADER=libuplinkcv1.7.0.h
 #Library Path
 MACOS_DYLIB_DEFAULT_PAYH=/usr/local/lib
 #JSFOLDER
 JSFOLDER=dist
-JSFOLDERLIB=libuplinkcv1.2.4.*
+JSFOLDERLIB=libuplinkcv1.7.0.*
 #Color
 RED_COLOR=\033[31m
 GREEN_COLOR=\033[32m
