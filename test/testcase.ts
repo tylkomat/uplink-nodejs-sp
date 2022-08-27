@@ -27,9 +27,9 @@ function readAPIKey () {
     try {
         //
         const filename = "secret.txt";
-        if (fs.existsSync(filename)) {
+        if (fs.existsSync(__dirname+"/"+filename)) {
             storjConfig.apiKey = fs.readFileSync(
-                filename,
+                __dirname+"/"+filename,
                 {"encoding": "utf8",
                     "flag": "r"}
             );
